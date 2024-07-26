@@ -9,19 +9,22 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(response => response.json())
         .then(data => {
-            document.querySelector('#isp span').textContent = data.org;
-            document.querySelector('#location span').textContent = `${data.city}, ${data.country_name}`;
+            document.querySelector('#isp span').textContent = data.org || 'N/A';
+            document.querySelector('#location span').textContent = `${data.city || 'N/A'}, ${data.country_name || 'N/A'}`;
             updateTimeAndDate(data.timezone);
-            setInterval(() => updateTimeAndDate(data.timezone), 1000);
         })
         .catch(error => {
             console.error('Error fetching data:', error);
+            document.querySelector('#isp span').textContent = 'Error fetching ISP';
+            document.querySelector('#location span').textContent = 'Error fetching location';
+            document.querySelector('#time span').textContent = 'Error fetching time';
+            document.querySelector('#date span').textContent = 'Error fetching date';
         });
 
     function updateTimeAndDate(timezone) {
         const now = new Date();
         const options = {
-            timeZone: timezone,
+            timeZone: timezone || 'UTC',
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
@@ -31,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#time span').textContent = timeString;
 
         const dateOptions = {
-            timeZone: timezone,
+            timeZone: timezone || 'UTC',
             year: 'numeric',
             month: 'long',
             day: 'numeric'
