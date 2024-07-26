@@ -1,6 +1,6 @@
 async function fetchData() {
     const apiKey = '00fbc71f8f38cc'; // Your ipinfo.io API key
-    const response = await fetch(`https://ipinfo.io/json?token=${00fbc71f8f38cc}`);
+    const response = await fetch(`https://ipinfo.io/json?token=${apiKey}`);
     const data = await response.json();
 
     document.getElementById('ip-address').textContent = data.ip;
