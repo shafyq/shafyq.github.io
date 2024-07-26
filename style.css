@@ -1,6 +1,6 @@
 body {
     font-family: 'Roboto', sans-serif;
-    background-color: #e0e5ec;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
     margin: 0;
     display: flex;
     justify-content: center;
@@ -13,11 +13,13 @@ body {
     text-align: center;
     background: #ffffff;
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 90%;
     border: 1px solid #ddd;
+    position: relative;
+    z-index: 1;
 }
 
 h1 {
@@ -37,10 +39,24 @@ p {
 span {
     font-weight: 600;
     color: #000;
-    background: #f4f4f4;
+    background: #e0e0e0;
     padding: 5px 10px;
     border-radius: 5px;
     display: inline-block;
+}
+
+h3 {
+    color: #777;
+    font-size: 1em;
+    margin-top: 20px;
+    font-weight: 400;
+}
+
+img {
+    display: block;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 600px) {
