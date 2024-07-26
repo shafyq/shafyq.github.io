@@ -15,6 +15,9 @@ body {
     padding: 20px;
     width: 80%;
     max-width: 800px;
+    background-color: #000;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    border-radius: 5px;
 }
 
 p {
@@ -28,4 +31,10 @@ p {
 
 #current-date {
     font-weight: bold;
+}
+
+/* Optional: Add some "fake" terminal commands */
+#terminal::before {
+    content: "user@terminal:~$ ";
+    color: #0f0;
 }
