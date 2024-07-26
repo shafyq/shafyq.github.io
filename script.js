@@ -5,7 +5,7 @@ async function fetchVisitorData() {
         const ipData = await ipResponse.json();
         document.querySelector('#ip-address span').textContent = ipData.ip;
 
-        const locationResponse = await fetch(`https://ipinfo.io/${ipData.ip}?token=YOUR_API_TOKEN`);
+        const locationResponse = await fetch(`https://ipinfo.io/${ipData.ip}?token=00fbc71f8f38cc`);
         const locationData = await locationResponse.json();
         document.querySelector('#isp span').textContent = locationData.org;
         document.querySelector('#location span').textContent = `${locationData.city}, ${locationData.country}`;
