@@ -1,40 +1,33 @@
-async function fetchVisitorData() {
-    try {
-        // Fetch IP address
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        document.querySelector('#ip-address span').textContent = ipData.ip;
+async function fetchData() {
+    const apiKey = '00fbc71f8f38cc'; // Your ipinfo.io API key
+    const response = await fetch(`https://ipinfo.io/json?token=${00fbc71f8f38cc}`);
+    const data = await response.json();
 
-        // Fetch additional information
-        const locationResponse = await fetch(`https://ipinfo.io/${ipData.ip}?token=00fbc71f8f38cc`);
-        const locationData = await locationResponse.json();
-        document.querySelector('#isp span').textContent = locationData.org;
-        document.querySelector('#city span').textContent = locationData.city;
-        document.querySelector('#country span').textContent = locationData.country;
+    document.getElementById('ip-address').textContent = data.ip;
+    document.getElementById('isp-name').textContent = data.org;
+    document.getElementById('city-name').textContent = data.city;
+    document.getElementById('country-name').textContent = `${data.country} 🇺🇸`; // Adjust emoji based on country code
+    document.getElementById('os-name').textContent = navigator.platform;
+    document.getElementById('device-name').textContent = navigator.userAgent;
 
-        // Detect Operating System
-        const os = navigator.userAgent;
-        document.querySelector('#os span').textContent = os.includes('Windows') ? 'Windows' : os.includes('Mac') ? 'Mac OS' : 'Other';
-
-        // Detect Device Type
-        const device = /Mobi/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
-        document.querySelector('#device span').textContent = device;
-
-        // Update Time and Date
-        function updateTime() {
-            const now = new Date();
-            const time = now.toLocaleTimeString('en-GB', { hour12: false });
-            const date = now.toLocaleDateString('en-GB');
-            document.querySelector('#time span').textContent = time;
-            document.querySelector('#date span').textContent = date;
-        }
-
-        updateTime();
-        setInterval(updateTime, 1000);
-
-    } catch (error) {
-        console.error('Error fetching visitor data:', error);
-    }
+    updateTimeAndDate();
 }
 
-document.addEventListener('DOMContentLoaded', fetchVisitorData);
+function updateTimeAndDate() {
+    const now = new Date();
+    const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+    const optionsDate = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+    function update() {
+        document.getElementById('current-time').textContent = now.toLocaleTimeString([], optionsTime);
+        document.getElementById('current-date').textContent = now.toLocaleDateString([], optionsDate);
+    }
+
+    update();
+    setInterval(() => {
+        now.setSeconds(now.getSeconds() + 1);
+        update();
+    }, 1000);
+}
+
+fetchData();
