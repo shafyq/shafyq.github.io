@@ -1,73 +1,45 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
     margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    color: #333;
 }
 
 .container {
     text-align: center;
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 2em;
     max-width: 600px;
     width: 90%;
-    border: 1px solid #ddd;
-    position: relative;
-    z-index: 1;
 }
 
 h1 {
-    color: #4a90e2;
-    margin-bottom: 20px;
-    font-size: 2.5em;
-    font-weight: 700;
+    color: #3498db;
+    margin-bottom: 1em;
 }
 
 p {
-    color: #555;
     font-size: 1.2em;
-    margin: 15px 0;
-    line-height: 1.6;
+    margin: 0.5em 0;
 }
 
 span {
-    font-weight: 600;
-    color: #000;
-    background: #e0e0e0;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: inline-block;
+    font-weight: bold;
 }
 
-h3 {
-    color: #777;
-    font-size: 1em;
-    margin-top: 20px;
-    font-weight: 400;
-}
-
-img {
-    display: block;
-    margin: 30px auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+#time, #date {
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 @media (max-width: 600px) {
-    .container {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 1.8em;
-    }
-
     p {
         font-size: 1em;
     }
