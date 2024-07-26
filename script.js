@@ -1,28 +1,35 @@
-async function fetchData() {
-    const response = await fetch('https://ipinfo.io/json?token=00fbc71f8f38cc');
-    const data = await response.json();
+async function fetchVisitorData() {
+    try {
+        // Replace with a suitable API if needed
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        document.querySelector('#ip-address span').textContent = ipData.ip;
 
-    document.getElementById('ip').textContent = data.ip;
-    document.getElementById('isp').textContent = data.org;
-    document.getElementById('city').textContent = data.city;
-    document.getElementById('country').textContent = data.country;
-    document.getElementById('country-emoji').textContent = getEmojiFlag(data.country);
-    document.getElementById('os').textContent = navigator.platform;
-    document.getElementById('device').textContent = navigator.userAgent;
+        const locationResponse = await fetch(`https://ipinfo.io/${ipData.ip}?token=00fbc71f8f38cc`);
+        const locationData = await locationResponse.json();
+        document.querySelector('#isp span').textContent = locationData.org;
+        document.querySelector('#location span').textContent = `${locationData.city}, ${locationData.country}`;
 
-    updateTime();
-    setInterval(updateTime, 1000);
+        const os = navigator.userAgent;
+        document.querySelector('#os span').textContent = os.includes('Windows') ? 'Windows' : os.includes('Mac') ? 'Mac OS' : 'Other';
 
-    function getEmojiFlag(countryCode) {
-        const codePoints = countryCode.toUpperCase().split('').map(c => 0x1F1E6 + c.charCodeAt() - 65);
-        return String.fromCodePoint(...codePoints);
-    }
+        const device = /Mobi/.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+        document.querySelector('#device span').textContent = device;
 
-    function updateTime() {
-        const date = new Date();
-        document.getElementById('time').textContent = date.toLocaleTimeString('en-US', { hour12: false });
-        document.getElementById('date').textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        function updateTime() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-GB', { hour12: false });
+            const date = now.toLocaleDateString('en-GB');
+            document.querySelector('#time span').textContent = time;
+            document.querySelector('#date span').textContent = date;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+    } catch (error) {
+        console.error('Error fetching visitor data:', error);
     }
 }
 
-fetchData();
+document.addEventListener('DOMContentLoaded', fetchVisitorData);
