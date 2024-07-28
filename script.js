@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const { ip, city, country, org, loc } = data;
             ipAddressElement.textContent = `Your IP Address: ${ip}`;
-            ispElement.textContent = `Your Internet Provider: ${org}`;
+            ispElement.textContent = `Your Internet Provider: ${cleanIspName(org)}`;
             const countryName = getCountryName(country);
             const countryFlag = getCountryFlagEmoji(country);
             const greeting = getLocalGreeting(country);
@@ -34,6 +34,11 @@ document.addEventListener("DOMContentLoaded", function() {
             weatherElement.textContent = "";
         });
 });
+
+function cleanIspName(org) {
+    // Remove any leading code words like 'AS135654' from the ISP name
+    return org.replace(/^[A-Z]+\d+[\s-]*/, '');
+}
 
 function getCountryName(countryCode) {
     const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
