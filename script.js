@@ -54,9 +54,6 @@ function getLocalGreeting(countryCode) {
         "JP": "こんにちは",
         "CN": "你好",
         "IN": "नमस्ते"
-        "IR": "سلام"
-        "BD": "স্বাগতম"
-    
     };
     return greetings[countryCode] || "Hello";
 }
@@ -73,4 +70,18 @@ function displayMap(latitude, longitude) {
 
 function fetchWeather(city, country) {
     const weatherApiKey = "1d99604fcdcce650d2c516d070d0df1b";
-    const weatherAp
+    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${weatherApiKey}&units=metric`;
+
+    fetch(weatherApiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const { main, weather } = data;
+            const temperature = main.temp;
+            const description = weather[0].description;
+            weatherElement.innerHTML = `Your Weather Now is: ${temperature}°C, ${description}`;
+        })
+        .catch(error => {
+            console.error("Error fetching weather data:", error);
+            weatherElement.textContent = "Unable to fetch weather information.";
+        });
+}
