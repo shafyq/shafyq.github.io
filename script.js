@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const { ip, city, country, org, loc } = data;
             ipAddressElement.textContent = `Your IP Address: ${ip}`;
-            ispElement.textContent = `Your Internet Provider: ${org}`;
+            ispElement.textContent = `Your are Using: ${org}`;
             const countryName = getCountryName(country);
             const countryFlag = getCountryFlagEmoji(country);
             const greeting = getLocalGreeting(country);
