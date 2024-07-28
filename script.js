@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const ipAddressElement = document.getElementById("ip-address");
     const cityElement = document.getElementById("city");
     const ispElement = document.getElementById("isp");
-    const countryElement = document.getElementById("country");
     const weatherElement = document.getElementById("weather");
 
     // Replace 'YOUR_IPINFO_API_KEY' with your actual ipinfo.io API key
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const { ip, city, country, org, loc } = data;
             ipAddressElement.textContent = `Your IP Address: ${ip}`;
-            ispElement.textContent = `Your Internet Provider: ${org}`;
+            ispElement.textContent = `Your Internet Provider: ${cleanISPName(org)}`;
             const countryName = getCountryName(country);
             const countryFlag = getCountryFlagEmoji(country);
             const greeting = getLocalGreeting(country);
@@ -30,10 +29,15 @@ document.addEventListener("DOMContentLoaded", function() {
             ipAddressElement.textContent = "Unable to fetch IP address.";
             cityElement.textContent = "";
             ispElement.textContent = "";
-            countryElement.textContent = "";
             weatherElement.textContent = "";
         });
 });
+
+function cleanISPName(org) {
+    // Remove any unwanted prefixes or text before the ISP name
+    // Example: "AS1234 - My ISP" becomes "My ISP"
+    return org.split(" - ").pop();
+}
 
 function getCountryName(countryCode) {
     const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
@@ -53,8 +57,8 @@ function getLocalGreeting(countryCode) {
         "DE": "Hallo",
         "JP": "こんにちは",
         "CN": "你好",
-        "IN": "नमस्ते",
-        "IR": "سلام",
+        "IN": "नमस्ते"
+        "IR": "سلام,
         "BD": "স্বাগতম"
     };
     return greetings[countryCode] || "Hello";
@@ -71,19 +75,17 @@ function displayMap(latitude, longitude) {
 }
 
 function fetchWeather(city, country) {
-    const weatherApiKey = "1d99604fcdcce650d2c516d070d0df1b";
-    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${weatherApiKey}&units=metric`;
+    const weatherApiKey = "c56366569f234c13919192259242807"; // Replace with your WeatherAPI key
+    const weatherApiUrl = `http://api.weatherapi.com/v1/current.json?key=${weatherApiKey}&q=${city},${country}`;
 
     fetch(weatherApiUrl)
         .then(response => response.json())
         .then(data => {
-            const { main, weather } = data;
-            const temperature = main.temp;
-            const description = weather[0].description;
+            const { current } = data;
+            const temperature = current.temp_c;
+            const description = current.condition.text;
             weatherElement.innerHTML = `Your Weather Now is: ${temperature}°C, ${description}`;
         })
         .catch(error => {
             console.error("Error fetching weather data:", error);
-            weatherElement.textContent = "Unable to fetch weather information.";
-        });
-}
+            weathe
