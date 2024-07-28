@@ -3,27 +3,35 @@ document.addEventListener("DOMContentLoaded", function() {
     const cityElement = document.getElementById("city");
     const ispElement = document.getElementById("isp");
     const countryElement = document.getElementById("country");
+    const weatherElement = document.getElementById("weather");
 
-    // Replace 'YOUR_API_KEY' with your actual ipinfo.io API key
-    const apiKey = "00fbc71f8f38cc";
-    const apiUrl = `https://ipinfo.io/json?token=${apiKey}`;
+    // Replace 'YOUR_IPINFO_API_KEY' with your actual ipinfo.io API key
+    const ipinfoApiKey = "00fbc71f8f38cc";
+    const ipinfoApiUrl = `https://ipinfo.io/json?token=${ipinfoApiKey}`;
 
-    fetch(apiUrl)
+    fetch(ipinfoApiUrl)
         .then(response => response.json())
         .then(data => {
-            ipAddressElement.textContent = `IP Address: ${data.ip}`;
-            cityElement.textContent = `City: ${data.city}`;
-            ispElement.textContent = `ISP: ${data.org}`;
-            const countryName = getCountryName(data.country);
-            const countryFlag = getCountryFlagEmoji(data.country);
-            countryElement.textContent = `Country: ${countryName} ${countryFlag}`;
+            const { ip, city, country, org, loc } = data;
+            ipAddressElement.textContent = `Your IP Address: ${ip}`;
+            ispElement.textContent = `Your Internet Provider: ${org}`;
+            const countryName = getCountryName(country);
+            const countryFlag = getCountryFlagEmoji(country);
+            const greeting = getLocalGreeting(country);
+            cityElement.innerHTML = `You are from: ${city}, ${countryName} ${countryFlag} (${greeting} 👋)`;
+
+            const [latitude, longitude] = loc.split(',');
+            displayMap(latitude, longitude);
+
+            fetchWeather(city, country);
         })
         .catch(error => {
-            console.error("Error fetching IP address:", error);
+            console.error("Error fetching IP information:", error);
             ipAddressElement.textContent = "Unable to fetch IP address.";
             cityElement.textContent = "";
             ispElement.textContent = "";
             countryElement.textContent = "";
+            weatherElement.textContent = "";
         });
 });
 
@@ -36,3 +44,31 @@ function getCountryFlagEmoji(countryCode) {
     const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
     return String.fromCodePoint(...codePoints);
 }
+
+function getLocalGreeting(countryCode) {
+    const greetings = {
+        "US": "Hello",
+        "FR": "Bonjour",
+        "ES": "Hola",
+        "DE": "Hallo",
+        "JP": "こんにちは",
+        "CN": "你好",
+        "IN": "नमस्ते"
+        "IR": "سلام"
+    };
+    return greetings[countryCode] || "Hello";
+}
+
+function displayMap(latitude, longitude) {
+    const map = L.map('map').setView([latitude, longitude], 10);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker([latitude, longitude]).addTo(map);
+}
+
+function fetchWeather(city, country) {
+    const weatherApiKey = "1d99604fcdcce650d2c516d070d0df1b";
+    const weatherAp
