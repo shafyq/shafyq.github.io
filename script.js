@@ -1,3 +1,6 @@
+Sure, I've removed the code word before the ISP name. Here's the updated code:
+
+```javascript
 document.addEventListener("DOMContentLoaded", function() {
     const ipAddressElement = document.getElementById("ip-address");
     const cityElement = document.getElementById("city");
@@ -87,3 +90,4 @@ function fetchWeather(city, country) {
             weatherElement.textContent = "Unable to fetch weather information.";
         });
 }
+```
