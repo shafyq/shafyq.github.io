@@ -2,8 +2,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const ipAddressElement = document.getElementById("ip-address");
     const cityElement = document.getElementById("city");
     const ispElement = document.getElementById("isp");
-    const countryElement = document.getElementById("country");
     const weatherElement = document.getElementById("weather");
+    const smallMapElement = document.getElementById("small-map");
 
     // Replace 'YOUR_IPINFO_API_KEY' with your actual ipinfo.io API key
     const ipinfoApiKey = "00fbc71f8f38cc";
@@ -22,21 +22,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const [latitude, longitude] = loc.split(',');
             displayMap(latitude, longitude);
-
             fetchWeather(city, country);
+            displaySmallMap(city);
         })
         .catch(error => {
             console.error("Error fetching IP information:", error);
             ipAddressElement.textContent = "Unable to fetch IP address.";
             cityElement.textContent = "";
             ispElement.textContent = "";
-            countryElement.textContent = "";
             weatherElement.textContent = "";
         });
 });
 
 function cleanIspName(org) {
-    // Remove any leading code words like 'AS135654' from the ISP name
     return org.replace(/^[A-Z]+\d+[\s-]*/, '');
 }
 
@@ -90,5 +88,27 @@ function fetchWeather(city, country) {
         .catch(error => {
             console.error("Error fetching weather data:", error);
             weatherElement.textContent = "Unable to fetch weather information.";
+        });
+}
+
+function displaySmallMap(city) {
+    const geocodeApiKey = '234e3c92e51d49ed86d29045ffe623a4'; // Replace with your Geocoding API key
+    const geocodeApiUrl = `https://api.opencagedata.com/geocode/v1/json?q=${city}&key=${geocodeApiKey}`;
+
+    fetch(geocodeApiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const { lat, lng } = data.results[0].geometry;
+            const smallMap = L.map('small-map').setView([lat, lng], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(smallMap);
+
+            L.marker([lat, lng]).addTo(smallMap);
+        })
+        .catch(error => {
+            console.error("Error fetching city coordinates:", error);
+            smallMapElement.textContent = "Unable to fetch city map.";
         });
 }
