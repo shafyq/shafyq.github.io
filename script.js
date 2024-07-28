@@ -14,11 +14,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             const { ip, city, country, org, loc } = data;
             ipAddressElement.textContent = `Your IP Address: ${ip}`;
-            ispElement.textContent = `Your Internet Provider: ${cleanIspName(org)}`;
+            ispElement.textContent = `Your are Using: ${cleanIspName(org)}`;
             const countryName = getCountryName(country);
             const countryFlag = getCountryFlagEmoji(country);
             const greeting = getLocalGreeting(country);
-            cityElement.innerHTML = `You are from: ${city}, ${countryName} ${countryFlag} (${greeting} 👋)`;
+            cityElement.innerHTML = `You are in: ${city}, ${countryName} ${countryFlag} (${greeting} 👋)`;
 
             const [latitude, longitude] = loc.split(',');
             displayMap(latitude, longitude);
