@@ -4,7 +4,7 @@ $(document).ready(function() {
         var city = response.city;
 
         // Fetch weather data for the city
-        var apiKey = '2ec7ddaaa23180e20776f2c94ce469cf';
+        var apiKey = '1d99604fcdcce650d2c516d070d0df1b';
         var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
         $.get(weatherApiUrl, function(weatherData) {
