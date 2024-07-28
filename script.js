@@ -54,6 +54,8 @@ function getLocalGreeting(countryCode) {
         "JP": "こんにちは",
         "CN": "你好",
         "IN": "नमस्ते"
+        "IR": "سلام"
+        "BD": "স্বাগতম"
     };
     return greetings[countryCode] || "Hello";
 }
