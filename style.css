@@ -1,46 +1,15 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.container {
+    font-family: Arial, sans-serif;
     text-align: center;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    padding: 2em;
-    max-width: 600px;
-    width: 90%;
+    background-color: #f0f8ff;
+    color: #333;
 }
 
 h1 {
-    color: #3498db;
-    margin-bottom: 1em;
+    margin-top: 20px;
 }
 
-p {
+#weather {
+    margin-top: 20px;
     font-size: 1.2em;
-    margin: 0.5em 0;
-}
-
-span {
-    font-weight: bold;
-}
-
-#time, #date {
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-@media (max-width: 600px) {
-    p {
-        font-size: 1em;
-    }
 }
