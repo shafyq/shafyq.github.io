@@ -1,19 +1,17 @@
-$(document).ready(function() {
-    // Get the city from IP address
-    $.get("https://ipinfo.io?token=00fbc71f8f38cc", function(response) {
-        var city = response.city;
+document.addEventListener("DOMContentLoaded", function() {
+    const ipAddressElement = document.getElementById("ip-address");
 
-        // Fetch weather data for the city
-        var apiKey = '1d99604fcdcce650d2c516d070d0df1b';
-        var weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    // Replace 'YOUR_API_KEY' with your actual ipinfo.io API key
+    const apiKey = "00fbc71f8f38cc";
+    const apiUrl = `https://ipinfo.io/json?token=${apiKey}`;
 
-        $.get(weatherApiUrl, function(weatherData) {
-            var weatherDescription = weatherData.weather[0].description;
-            var temperature = weatherData.main.temp;
-            var weatherHtml = `<p>City: ${city}</p>
-                               <p>Weather: ${weatherDescription}</p>
-                               <p>Temperature: ${temperature}°C</p>`;
-            $('#weather').html(weatherHtml);
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            ipAddressElement.textContent = data.ip;
+        })
+        .catch(error => {
+            console.error("Error fetching IP address:", error);
+            ipAddressElement.textContent = "Unable to fetch IP address.";
         });
-    }, "jsonp");
 });
