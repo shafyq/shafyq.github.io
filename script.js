@@ -1,138 +1,60 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const ipAddressElement = document.getElementById("ip-address");
-    const cityElement = document.getElementById("city");
-    const ispElement = document.getElementById("isp");
-    const weatherElement = document.getElementById("weather");
-    const deviceTypeElement = document.getElementById("device-type");
-    const deviceInfoElement = document.getElementById("device-info");
+// Replace with your API keys
+const IPINFO_API_KEY = '00fbc71f8f38cc';
+const WEATHER_API_KEY = '1d99604fcdcce650d2c516d070d0df1b';
 
-    // Using ipapi.co API to fetch IP information
-    const ipApiUrl = `https://ipapi.co/json/`;
+async function fetchLocation() {
+    const response = await fetch(`https://ipinfo.io/json?token=${IPINFO_API_KEY}`);
+    const data = await response.json();
+    return data;
+}
 
-    fetch(ipApiUrl)
-        .then(response => response.json())
-        .then(data => {
-            console.log("IPAPI Response:", data); // Log the response data
+async function fetchWeather(city) {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}&units=metric`);
+    const data = await response.json();
+    return data;
+}
 
-            if (data) {
-                const { ip, city, country_name, org, latitude, longitude } = data;
-                ipAddressElement.textContent = `Your IP Address: ${ip}`;
-                ispElement.textContent = `Your Internet Provider: ${org || "Unknown"}`;
-                const countryFlag = getCountryFlagEmoji(data.country);
-                const greeting = getLocalGreeting(data.country);
-                cityElement.innerHTML = `You are in: ${city}, ${country_name} ${countryFlag} (${greeting} 👋)`;
+function displayGreeting(location) {
+    const greeting = document.getElementById('greeting');
+    const city = location.city;
+    const country = location.country_name;
+    const flag = location.country_flag_emoji;
+    greeting.innerHTML = `Greetings my dear visitor from ${city}, ${country} ${flag}`;
+}
 
-                if (city) {
-                    geocodeCity(city, country_name);
-                } else if (latitude && longitude) {
-                    displayGoogleMap(latitude, longitude);
-                } else {
-                    console.error("Location data is missing.");
-                }
+function displayWeather(weather) {
+    const weatherElement = document.getElementById('weather');
+    const temperature = weather.main.temp;
+    const description = weather.weather[0].description;
 
-                fetchWeather(city, data.country);
-                detectDeviceType();
-            } else {
-                console.error("Failed to fetch data from IPAPI.");
-            }
-        })
-        .catch(error => {
-            console.error("Error fetching IP information:", error);
-            ipAddressElement.textContent = "Unable to fetch IP address.";
-            cityElement.textContent = "Unable to fetch location.";
-            ispElement.textContent = "Unable to fetch ISP.";
-            weatherElement.textContent = "Unable to fetch weather.";
-        });
+    let weatherMessage = `Your current weather is ${temperature}°C and ${description}. 🌡️`;
+    if (temperature > 30) {
+        weatherMessage += ' It\'s quite hot outside! Be careful! ☀️';
+    } else if (temperature < 10) {
+        weatherMessage += ' It\'s quite chilly! Stay warm! ❄️';
+    } else {
+        weatherMessage += ' The weather is great for a picnic outside! 🌳';
     }
 
-    function cleanIspName(org) {
-        return org ? org.replace(/^[A-Z]+\d+[\s-]*/, '') : "Unknown";
-    }
+    weatherElement.innerHTML = weatherMessage;
+}
 
-    function getCountryFlagEmoji(countryCode) {
-        if (!countryCode) return '';
-        const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
-        return String.fromCodePoint(...codePoints);
-    }
+function displayIpInfo(location) {
+    const ipInfoElement = document.getElementById('ip-info');
+    const ipAddress = location.ip;
+    const isp = location.org;
 
-    function getLocalGreeting(countryCode) {
-        const greetings = {
-            "US": "Hello",
-            "FR": "Bonjour",
-            "ES": "Hola",
-            "DE": "Hallo",
-            "JP": "こんにちは",
-            "CN": "你好",
-            "IN": "नमस्ते",
-            "IR": "سلام",
-            "BD": "স্বাগতম",
-        };
-        return greetings[countryCode] || "Hello";
-    }
+    ipInfoElement.innerHTML = `Your IP address is ${ipAddress} and your Internet Provider is ${isp}`;
+}
 
-    function displayGoogleMap(latitude, longitude) {
-        const mapElement = document.getElementById('map');
-        const map = new google.maps.Map(mapElement, {
-            center: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-            zoom: 10
-        });
+async function init() {
+    const location = await fetchLocation();
+    const city = location.city;
+    displayGreeting(location);
+    displayIpInfo(location);
 
-        new google.maps.Marker({
-            position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-            map: map
-        });
-    }
+    const weather = await fetchWeather(city);
+    displayWeather(weather);
+}
 
-    function geocodeCity(city, country) {
-        const geocoder = new google.maps.Geocoder();
-        const address = `${city}, ${country}`;
-        
-        geocoder.geocode({ address: address }, (results, status) => {
-            if (status === google.maps.GeocoderStatus.OK) {
-                const location = results[0].geometry.location;
-                displayGoogleMap(location.lat(), location.lng());
-            } else {
-                console.error("Geocoding error:", status);
-            }
-        });
-    }
-
-    function fetchWeather(city, country) {
-        const weatherApiKey = "1d99604fcdcce650d2c516d070d0df1b"; // Replace with your actual OpenWeatherMap API key
-        const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${weatherApiKey}&units=metric`;
-
-        fetch(weatherApiUrl)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Weather API Response:", data); // Log the weather API response
-
-                const { main, weather } = data;
-                if (main && weather) {
-                    const temperature = main.temp;
-                    const description = weather[0].description;
-                    weatherElement.innerHTML = `Your Weather Now is: ${temperature}°C, ${description}`;
-                } else {
-                    console.error("Weather data is missing or invalid.");
-                    weatherElement.textContent = "Unable to fetch weather information.";
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching weather data:", error);
-                weatherElement.textContent = "Unable to fetch weather information.";
-            });
-    }
-
-    function detectDeviceType() {
-        const ua = navigator.userAgent;
-        const isMobile = /mobile/i.test(ua);
-        const isTablet = /tablet|ipad|playbook|silk/i.test(ua);
-        const isDesktop = !isMobile && !isTablet;
-        
-        let deviceType = "Desktop";
-        if (isMobile) deviceType = "Mobile";
-        else if (isTablet) deviceType = "Tablet";
-
-        deviceTypeElement.textContent = `You are using: ${deviceType}`;
-        deviceInfoElement.textContent = `Your device is: ${navigator.platform} - ${navigator.userAgent}`;
-    }
-</script>
+init();
