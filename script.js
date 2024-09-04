@@ -1,198 +1,115 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const ipInfoToken = '00fbc71f8f38cc'; // Replace with your actual ipinfo.io token
+document.addEventListener("DOMContentLoaded", function() {
+    const ipAddressElement = document.getElementById("ip-address");
+    const cityElement = document.getElementById("city");
+    const ispElement = document.getElementById("isp");
+    const countryElement = document.getElementById("country");
+    const weatherElement = document.getElementById("weather");
+    const deviceTypeElement = document.getElementById("device-type");
+    const deviceInfoElement = document.getElementById("device-info");
+    
+    const ipinfoApiKey = "00fbc71f8f38cc"; // Replace with your actual ipinfo.io API key
+    const ipinfoApiUrl = `https://ipinfo.io/json?token=${ipinfoApiKey}`;
 
-    // Function to fetch data from IPinfo
-    function fetchIpInfo() {
-        return fetch(`https://ipinfo.io/json?token=${ipInfoToken}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .catch(() => {
-                console.warn('Failed to fetch from ipinfo.io, trying another API...');
-                return fetchIpApiFallback();
-            });
-    }
+    fetch(ipinfoApiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const { ip, city, country, org, loc } = data;
+            ipAddressElement.textContent = `Your IP Address: ${ip}`;
+            ispElement.textContent = `Your Internet Provider: ${cleanIspName(org)}`;
+            const countryName = getCountryName(country);
+            const countryFlag = getCountryFlagEmoji(country);
+            const greeting = getLocalGreeting(country);
+            cityElement.innerHTML = `You are in: ${city}, ${countryName} ${countryFlag} (${greeting} 👋)`;
 
-    // Fallback function using ipapi.co
-    function fetchIpApiFallback() {
-        return fetch('https://ipapi.co/json/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            });
-    }
+            const [latitude, longitude] = loc.split(',');
+            displayGoogleMap(latitude, longitude);
 
-    // Function to handle data once fetched
-    function handleData(data) {
-        const { ip, city, country_name, org } = data;
+            fetchWeather(city, country);
 
-        // Display IP and ISP
-        document.getElementById('ip').textContent = ip;
-        document.getElementById('isp').textContent = org;
-
-        // Display City and Country
-        document.getElementById('location').textContent = `${city}, ${country_name}`;
-
-        // Generate Google Map
-        const mapFrame = document.createElement('iframe');
-        mapFrame.src = `https://maps.google.com/maps?q=${city}&output=embed`;
-        mapFrame.width = '100%';
-        mapFrame.height = '300';
-        mapFrame.style.border = '0';
-        document.getElementById('map').appendChild(mapFrame);
-
-        // Greet user in their national language
-        greetUser(country_name);
-
-        // Detect Device Type
-        const deviceType = detectDeviceType();
-        document.getElementById('device-type').textContent = deviceType;
-
-        // Display Device Info
-        const deviceInfo = `${navigator.platform} - ${navigator.userAgent}`;
-        document.getElementById('device-info').textContent = deviceInfo;
-    }
-
-    // Fetch data from IPinfo or fallback API
-    fetchIpInfo()
-        .then(handleData)
-        .catch(err => console.error('Error fetching IP data:', err));
+            detectDeviceType();
+        })
+        .catch(error => {
+            console.error("Error fetching IP information:", error);
+            ipAddressElement.textContent = "Unable to fetch IP address.";
+            cityElement.textContent = "";
+            ispElement.textContent = "";
+            countryElement.textContent = "";
+            weatherElement.textContent = "";
+        });
 });
 
-function greetUser(country) {
-    const greetings = {
-function greetUser(country) {
-    const greetings = {
-        "Afghanistan": "سلام",
-        "Albania": "Përshëndetje",
-        "Algeria": "مرحبا",
-        "Andorra": "Hola",
-        "Angola": "Olá",
-        "Argentina": "Hola",
-        "Armenia": "Բարեւ Ձեզ",
-        "Australia": "Hello",
-        "Austria": "Hallo",
-        "Azerbaijan": "Salam",
-        "Bahamas": "Hello",
-        "Bahrain": "مرحبا",
-        "Bangladesh": "হ্যালো",
-        "Belarus": "Добры дзень",
-        "Belgium": "Hallo",
-        "Belize": "Hello",
-        "Benin": "Bonjour",
-        "Bhutan": "ཕེབས་ཨོ",
-        "Bolivia": "Hola",
-        "Bosnia and Herzegovina": "Zdravo",
-        "Botswana": "Dumela",
-        "Brazil": "Olá",
-        "Brunei": "Selamat datang",
-        "Bulgaria": "Здравейте",
-        "Burkina Faso": "Bonjour",
-        "Burundi": "Bonjour",
-        "Cambodia": "សួស្តី",
-        "Cameroon": "Bonjour",
-        "Canada": "Hello",
-        "Cape Verde": "Olá",
-        "Central African Republic": "Bonjour",
-        "Chad": "Bonjour",
-        "Chile": "Hola",
-        "China": "你好",
-        "Colombia": "Hola",
-        "Comoros": "Salam",
-        "Congo (Congo-Brazzaville)": "Bonjour",
-        "Costa Rica": "Hola",
-        "Croatia": "Pozdrav",
-        "Cuba": "Hola",
-        "Cyprus": "Γεια σας",
-        "Czech Republic (Czechia)": "Ahoj",
-        "Denmark": "Hej",
-        "Djibouti": "Bonjour",
-        "Dominica": "Hello",
-        "Dominican Republic": "Hola",
-        "Ecuador": "Hola",
-        "Egypt": "مرحبا",
-        "El Salvador": "Hola",
-        "Equatorial Guinea": "Hola",
-        "Eritrea": "Selam",
-        "Estonia": "Tere",
-        "Eswatini (fmr. "Swaziland")": "Sawubona",
-        "Ethiopia": "ሰላም",
-        "Fiji": "Bula",
-        "Finland": "Hei",
-        "France": "Bonjour",
-        "Gabon": "Bonjour",
-        "Gambia": "Hello",
-        "Georgia": "გამარჯობა",
-        "Germany": "Hallo",
-        "Ghana": "Hello",
-        "Greece": "Γειά σας",
-        "Grenada": "Hello",
-        "Guatemala": "Hola",
-        "Guinea": "Bonjour",
-        "Guinea-Bissau": "Olá",
-        "Guyana": "Hello",
-        "Haiti": "Bonjou",
-        "Honduras": "Hola",
-        "Hungary": "Helló",
-        "Iceland": "Halló",
-        "India": "नमस्ते",
-        "Indonesia": "Halo",
-        "Iran": "سلام",
-        "Iraq": "مرحبا",
-        "Ireland": "Hello",
-        "Israel": "שלום",
-        "Italy": "Ciao",
-        "Jamaica": "Hello",
-        "Japan": "こんにちは",
-        "Jordan": "مرحبا",
-        "Kazakhstan": "Сәлеметсіз бе",
-        "Kenya": "Hello",
-        "Kiribati": "Mauri",
-        "Kuwait": "مرحبا",
-        "Kyrgyzstan": "Салам",
-        "Laos": "ສະບາຍດີ",
-        "Latvia": "Sveiki",
-        "Lebanon": "مرحبا",
-        "Lesotho": "Lumela",
-        "Liberia": "Hello",
-        "Libya": "مرحبا",
-        "Liechtenstein": "Hallo",
-        "Lithuania": "Labas",
-        "Luxembourg": "Hallo",
-        "Madagascar": "Salama",
-        "Malawi": "Moni",
-        "Malaysia": "Selamat datang",
-        "Maldives": "Hello",
-        "Mali": "Bonjour",
-        "Malta": "Bongu",
-        "Marshall Islands": "Hello",
-        "Mauritania": "مرحبا",
-        "Mauritius": "Hello",
-        "Mexico": "Hola",
-        "Micronesia": "Kaselehlie",
-        "Moldova": "Bună ziua",
-        "Monaco": "Bonjour",
-        "Mongolia": "Сайн байна уу",
-        "Montenegro": "Zdravo",
-        "Morocco": "مرحبا",
-        
+function cleanIspName(org) {
+    return org.replace(/^[A-Z]+\d+[\s-]*/, '');
+}
 
-        // Add more countries and greetings here...
+function getCountryName(countryCode) {
+    const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+    return regionNames.of(countryCode);
+}
+
+function getCountryFlagEmoji(countryCode) {
+    const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
+    return String.fromCodePoint(...codePoints);
+}
+
+function getLocalGreeting(countryCode) {
+    const greetings = {
+        "US": "Hello",
+        "FR": "Bonjour",
+        "ES": "Hola",
+        "DE": "Hallo",
+        "JP": "こんにちは",
+        "CN": "你好",
+        "IN": "नमस्ते",
+        "IR": "سلام",
+        "BD": "স্বাগতম",
+        // Add more country codes and greetings as needed
     };
+    return greetings[countryCode] || "Hello";
+}
 
-    const greeting = greetings[country] || "Hello";
-    document.getElementById('greeting').textContent = greeting;
+// Initialize Google Maps
+function displayGoogleMap(latitude, longitude) {
+    const mapElement = document.getElementById('map');
+    const map = new google.maps.Map(mapElement, {
+        center: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+        zoom: 10
+    });
+
+    new google.maps.Marker({
+        position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+        map: map
+    });
+}
+
+function fetchWeather(city, country) {
+    const weatherApiKey = "1d99604fcdcce650d2c516d070d0df1b"; // Replace with your actual OpenWeatherMap API key
+    const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${weatherApiKey}&units=metric`;
+
+    fetch(weatherApiUrl)
+        .then(response => response.json())
+        .then(data => {
+            const { main, weather } = data;
+            const temperature = main.temp;
+            const description = weather[0].description;
+            weatherElement.innerHTML = `Your Weather Now is: ${temperature}°C, ${description}`;
+        })
+        .catch(error => {
+            console.error("Error fetching weather data:", error);
+            weatherElement.textContent = "Unable to fetch weather information.";
+        });
 }
 
 function detectDeviceType() {
     const ua = navigator.userAgent;
-    if (/mobile/i.test(ua)) return "Mobile";
-    if (/tablet/i.test(ua)) return "Tablet";
-    if (/iPad|Android|Touch/.test(ua)) return "Tablet";
-    return "Desktop";
+    const isMobile = /mobile/i.test(ua);
+    const isTablet = /tablet|ipad|playbook|silk/i.test(ua);
+    const isDesktop = !isMobile && !isTablet;
+    
+    let deviceType = "Desktop";
+    if (isMobile) deviceType = "Mobile";
+    else if (isTablet) deviceType = "Tablet";
+
+    deviceTypeElement.textContent = `You are using: ${deviceType}`;
+    deviceInfoElement.textContent = `Your device is: ${navigator.platform} - ${navigator.userAgent}`;
 }
