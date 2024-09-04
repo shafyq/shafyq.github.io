@@ -1,4 +1,1 @@
-Under construction
-
-To-Do
-Create different page for isp, ip, location, time, weather and date
+Just the landing page for my domain https://shafyq.com 
