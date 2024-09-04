@@ -13,41 +13,50 @@ document.addEventListener("DOMContentLoaded", function() {
     fetch(ipinfoApiUrl)
         .then(response => response.json())
         .then(data => {
-            const { ip, city, country, org, loc } = data;
-            ipAddressElement.textContent = `Your IP Address: ${ip}`;
-            ispElement.textContent = `Your Internet Provider: ${cleanIspName(org)}`;
-            const countryName = getCountryName(country);
-            const countryFlag = getCountryFlagEmoji(country);
-            const greeting = getLocalGreeting(country);
-            cityElement.innerHTML = `You are in: ${city}, ${countryName} ${countryFlag} (${greeting} 👋)`;
+            console.log("IPInfo API Response:", data); // Log the response data
 
-            const [latitude, longitude] = loc.split(',');
-            displayGoogleMap(latitude, longitude);
+            if (data) {
+                const { ip, city, country, org, loc } = data;
+                ipAddressElement.textContent = `Your IP Address: ${ip}`;
+                ispElement.textContent = `Your Internet Provider: ${cleanIspName(org)}`;
+                const countryName = getCountryName(country);
+                const countryFlag = getCountryFlagEmoji(country);
+                const greeting = getLocalGreeting(country);
+                cityElement.innerHTML = `You are in: ${city}, ${countryName} ${countryFlag} (${greeting} 👋)`;
 
-            fetchWeather(city, country);
+                if (loc) {
+                    const [latitude, longitude] = loc.split(',');
+                    displayGoogleMap(latitude, longitude);
+                } else {
+                    console.error("Location data is missing.");
+                }
 
-            detectDeviceType();
+                fetchWeather(city, country);
+                detectDeviceType();
+            } else {
+                console.error("Failed to fetch data from IPInfo API.");
+            }
         })
         .catch(error => {
             console.error("Error fetching IP information:", error);
             ipAddressElement.textContent = "Unable to fetch IP address.";
-            cityElement.textContent = "";
-            ispElement.textContent = "";
-            countryElement.textContent = "";
-            weatherElement.textContent = "";
+            cityElement.textContent = "Unable to fetch location.";
+            ispElement.textContent = "Unable to fetch ISP.";
+            weatherElement.textContent = "Unable to fetch weather.";
         });
 });
 
 function cleanIspName(org) {
-    return org.replace(/^[A-Z]+\d+[\s-]*/, '');
+    return org ? org.replace(/^[A-Z]+\d+[\s-]*/, '') : "Unknown";
 }
 
 function getCountryName(countryCode) {
     const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
-    return regionNames.of(countryCode);
+    return countryCode ? regionNames.of(countryCode) : "Unknown";
 }
 
 function getCountryFlagEmoji(countryCode) {
+    if (!countryCode) return '';
     const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
     return String.fromCodePoint(...codePoints);
 }
@@ -89,10 +98,17 @@ function fetchWeather(city, country) {
     fetch(weatherApiUrl)
         .then(response => response.json())
         .then(data => {
+            console.log("Weather API Response:", data); // Log the weather API response
+
             const { main, weather } = data;
-            const temperature = main.temp;
-            const description = weather[0].description;
-            weatherElement.innerHTML = `Your Weather Now is: ${temperature}°C, ${description}`;
+            if (main && weather) {
+                const temperature = main.temp;
+                const description = weather[0].description;
+                weatherElement.innerHTML = `Your Weather Now is: ${temperature}°C, ${description}`;
+            } else {
+                console.error("Weather data is missing or invalid.");
+                weatherElement.textContent = "Unable to fetch weather information.";
+            }
         })
         .catch(error => {
             console.error("Error fetching weather data:", error);
