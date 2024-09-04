@@ -27,16 +27,7 @@ function displayWeather(weather) {
     const temperature = weather.main.temp;
     const description = weather.weather[0].description;
 
-    let weatherMessage = `Your current weather is ${temperature}°C and ${description}. 🌡️`;
-    if (temperature > 30) {
-        weatherMessage += ' It\'s quite hot outside! Be careful! ☀️';
-    } else if (temperature < 10) {
-        weatherMessage += ' It\'s quite chilly! Stay warm! ❄️';
-    } else {
-        weatherMessage += ' The weather is great for a picnic outside! 🌳';
-    }
-
-    weatherElement.innerHTML = weatherMessage;
+    weatherElement.innerHTML = `Your current weather is ${temperature}°C and ${description}. 🌡️`;
 }
 
 function displayIpInfo(location) {
