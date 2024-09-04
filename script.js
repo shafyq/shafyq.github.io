@@ -1,47 +1,77 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Use an IP Geolocation API to get user's information
-    fetch('https://ipinfo.io/json?token=00fbc71f8f38cc')
-        .then(response => response.json())
-        .then(data => {
-            const { ip, city, country, org } = data;
+    const ipInfoToken = '00fbc71f8f38cc'; // Replace with your actual ipinfo.io token
 
-            // Display IP and ISP
-            document.getElementById('ip').textContent = ip;
-            document.getElementById('isp').textContent = org;
+    // Function to fetch data from IPinfo
+    function fetchIpInfo() {
+        return fetch(`https://ipinfo.io/json?token=${ipInfoToken}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .catch(() => {
+                console.warn('Failed to fetch from ipinfo.io, trying another API...');
+                return fetchIpApiFallback();
+            });
+    }
 
-            // Display City and Country
-            document.getElementById('location').textContent = `${city}, ${country}`;
+    // Fallback function using ipapi.co
+    function fetchIpApiFallback() {
+        return fetch('https://ipapi.co/json/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            });
+    }
 
-            // Generate Google Map
-            const mapFrame = document.createElement('iframe');
-            mapFrame.src = `https://maps.google.com/maps?q=${city}&output=embed`;
-            mapFrame.width = '100%';
-            mapFrame.height = '300';
-            mapFrame.style.border = '0';
-            document.getElementById('map').appendChild(mapFrame);
+    // Function to handle data once fetched
+    function handleData(data) {
+        const { ip, city, country_name, org } = data;
 
-            // Greet user in their national language
-            greetUser(country);
+        // Display IP and ISP
+        document.getElementById('ip').textContent = ip;
+        document.getElementById('isp').textContent = org;
 
-            // Detect Device Type
-            const deviceType = detectDeviceType();
-            document.getElementById('device-type').textContent = deviceType;
+        // Display City and Country
+        document.getElementById('location').textContent = `${city}, ${country_name}`;
 
-            // Display Device Info
-            const deviceInfo = `${navigator.platform} - ${navigator.userAgent}`;
-            document.getElementById('device-info').textContent = deviceInfo;
-        })
-        .catch(err => console.error('Failed to fetch IP info:', err));
+        // Generate Google Map
+        const mapFrame = document.createElement('iframe');
+        mapFrame.src = `https://maps.google.com/maps?q=${city}&output=embed`;
+        mapFrame.width = '100%';
+        mapFrame.height = '300';
+        mapFrame.style.border = '0';
+        document.getElementById('map').appendChild(mapFrame);
+
+        // Greet user in their national language
+        greetUser(country_name);
+
+        // Detect Device Type
+        const deviceType = detectDeviceType();
+        document.getElementById('device-type').textContent = deviceType;
+
+        // Display Device Info
+        const deviceInfo = `${navigator.platform} - ${navigator.userAgent}`;
+        document.getElementById('device-info').textContent = deviceInfo;
+    }
+
+    // Fetch data from IPinfo or fallback API
+    fetchIpInfo()
+        .then(handleData)
+        .catch(err => console.error('Error fetching IP data:', err));
 });
 
 function greetUser(country) {
     const greetings = {
-        "US": "Hello",
-        "FR": "Bonjour",
-        "ES": "Hola",
-        "DE": "Hallo",
-        "CN": "你好",
-        // Add more country codes and greetings here...
+        "United States": "Hello",
+        "France": "Bonjour",
+        "Spain": "Hola",
+        "Germany": "Hallo",
+        "China": "你好",
+        // Add more countries and greetings here...
     };
 
     const greeting = greetings[country] || "Hello";
