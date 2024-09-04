@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IP Address Finder</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <title>Welcome</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Your IP Information</h1>
-        <p id="ip-address">Fetching your IP address...</p>
-        <p id="isp"></p>
-        <p id="city"></p>
-        <div id="small-map" class="small-map-container"></div>
-        <p id="weather"></p>
-        <div id="map" class="map-container"></div>
-    </div>
-    <script src="script.js"></script>
+    <h1 id="greeting"></h1>
+    <p>Your IP Address: <span id="ip"></span></p>
+    <p>Your Internet Provider: <span id="isp"></span></p>
+    <p>You are using: <span id="device-type"></span></p>
+    <p>Your device is: <span id="device-info"></span></p>
+    <p>You are in: <span id="location"></span></p>
+    <div id="map"></div>
+
+    <script src="js/scripts.js"></script>
 </body>
 </html>
