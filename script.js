@@ -1,3 +1,16 @@
+// Country code to full name mapping
+const countryNames = {
+    "BD": "Bangladesh",
+    "US": "United States",
+    "FR": "France",
+    "ES": "Spain",
+    "DE": "Germany",
+    "IN": "India",
+    "IR": "Iran",
+    // Add more countries as needed
+    "default": "Unknown Country"
+};
+
 // Translation dictionary
 const translations = {
     "US": { greeting: "Hello", dear: "dear" },
@@ -5,8 +18,8 @@ const translations = {
     "ES": { greeting: "Hola", dear: "querido" },
     "DE": { greeting: "Hallo", dear: "lieber" },
     "IN": { greeting: "नमस्ते", dear: "प्रिय" },
-    "IR": { greeting: "سلام", dear: "عزیزم" },
-    "BD": { greeting: "সালাম","dear:""},
+    "IR": { greeting: "سلام", dear: "عزیز" },
+    "BD": { greeting: "হ্যালো", dear: "প্রিয়" },
     // Add more countries and their translations here
     "default": { greeting: "Hello", dear: "dear" }
 };
@@ -16,18 +29,19 @@ fetch('https://ipinfo.io/json?token=00fbc71f8f38cc') // Use your API key here
     .then(response => response.json())
     .then(data => {
         const city = data.city;
-        const country = data.country;
+        const countryCode = data.country;
         const ip = data.ip;
         const isp = data.org;
 
-        // Get country-specific translation
-        const translation = translations[country] || translations['default'];
+        // Get country name and translation
+        const countryName = countryNames[countryCode] || countryNames['default'];
+        const translation = translations[countryCode] || translations['default'];
 
         // Get Country Flag Emoji
-        const flagEmoji = countryToEmoji(country);
+        const flagEmoji = countryToEmoji(countryCode);
 
         // Update the HTML elements with user data
-        document.getElementById('greeting').textContent = `👋🏻 ${translation.greeting} ${translation.dear} from ${city}, ${country} ${flagEmoji}!`;
+        document.getElementById('greeting').textContent = `👋🏻 ${translation.greeting} ${translation.dear} from ${city}, ${countryName} ${flagEmoji}!`;
         document.getElementById('ip-info').textContent = `Your IP Address: ${ip}`;
         document.getElementById('isp-info').textContent = `You are Using: ${isp}`;
 
