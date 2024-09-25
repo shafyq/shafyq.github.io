@@ -6,15 +6,6 @@ body {
     
 }
 
-.container {
-    background: white;
-    
- 
-    width: 100%; /* Fill width of the parent */
-    max-width: 600px; /* Set a max width for the container */
-    text-align: left; /* Align the text to the left */
-}
-
 .container h1 {
     font-size: 2em;
     color: #333;
