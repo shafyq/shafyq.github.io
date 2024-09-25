@@ -8,9 +8,8 @@ body {
 
 .container {
     background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+ 
     width: 100%; /* Fill width of the parent */
     max-width: 600px; /* Set a max width for the container */
     text-align: left; /* Align the text to the left */
