@@ -11,19 +11,6 @@ const countryNames = {
     "default": "Unknown Country"
 };
 
-// Translation dictionary
-const translations = {
-    "US": { greeting: "Hello", dear: "dear" },
-    "FR": { greeting: "Bonjour", dear: "cher" },
-    "ES": { greeting: "Hola", dear: "querido" },
-    "DE": { greeting: "Hallo", dear: "lieber" },
-    "IN": { greeting: "नमस्ते", dear: "प्रिय" },
-    "IR": { greeting: "سلام", dear: "عزیز" },
-    "BD": { greeting: "হ্যালো", dear: "প্রিয়" },
-    // Add more countries and their translations here
-    "default": { greeting: "Hello", dear: "dear" }
-};
-
 // Get user data from ipinfo.io
 fetch('https://ipinfo.io/json?token=00fbc71f8f38cc') // Use your API key here
     .then(response => response.json())
@@ -33,15 +20,14 @@ fetch('https://ipinfo.io/json?token=00fbc71f8f38cc') // Use your API key here
         const ip = data.ip;
         const isp = data.org;
 
-        // Get country name and translation
+        // Get country name
         const countryName = countryNames[countryCode] || countryNames['default'];
-        const translation = translations[countryCode] || translations['default'];
 
         // Get Country Flag Emoji
         const flagEmoji = countryToEmoji(countryCode);
 
         // Update the HTML elements with user data
-        document.getElementById('greeting').textContent = `👋🏻 ${translation.greeting} ${translation.dear} from ${city}, ${countryName} ${flagEmoji}!`;
+        document.getElementById('greeting').textContent = `👋🏻 Hello dear from ${city}, ${countryName} ${flagEmoji}!`;
         document.getElementById('ip-info').textContent = `Your IP Address: ${ip}`;
         document.getElementById('isp-info').textContent = `You are Using: ${isp}`;
 
