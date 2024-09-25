@@ -5,7 +5,8 @@ const translations = {
     "ES": { greeting: "Hola", dear: "querido" },
     "DE": { greeting: "Hallo", dear: "lieber" },
     "IN": { greeting: "नमस्ते", dear: "प्रिय" },
-    "IR": { greeting: "سلام", dear: "عزیز" },
+    "IR": { greeting: "سلام", dear: "عزیزم" },
+    "BD": { greeting: "সালাম","dear:""},
     // Add more countries and their translations here
     "default": { greeting: "Hello", dear: "dear" }
 };
