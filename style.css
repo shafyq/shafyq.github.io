@@ -7,7 +7,8 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: black;
+    background-color: #000000; /* Hex code for black */
+    background-color: black; /* Named color */
     color: white;
     font-family: 'Ubuntu', sans-serif;
     font-size: 48px;
