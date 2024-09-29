@@ -1,18 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    padding: 50px;
-    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
     display: flex;
-    
-}
-
-.container h1 {
-    font-size: 2em;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.info {
-    margin: 15px 0;
-    font-size: 1.2em;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+    color: white;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
 }
